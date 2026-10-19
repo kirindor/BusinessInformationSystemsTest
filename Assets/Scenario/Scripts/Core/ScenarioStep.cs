@@ -4,7 +4,6 @@ using UnityEngine.Events;
 
 public class ScenarioStep : MonoBehaviour
 {
-    [SerializeField] private string id;
     [SerializeField, TextArea] private string description;
 
     public UnityEvent onActivated = new UnityEvent();
@@ -12,7 +11,6 @@ public class ScenarioStep : MonoBehaviour
 
     public event Action<ScenarioStep, bool, string> Reported;
 
-    public string Id => id;
     public string Description => description;
 
     public void Complete()
@@ -23,10 +21,5 @@ public class ScenarioStep : MonoBehaviour
     public void Violate(string reason)
     {
         Reported?.Invoke(this, false, reason);
-    }
-
-    private void Reset()
-    {
-        id = name;
     }
 }

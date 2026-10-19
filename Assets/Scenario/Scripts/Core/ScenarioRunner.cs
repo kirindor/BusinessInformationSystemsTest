@@ -55,7 +55,7 @@ public class ScenarioRunner : MonoBehaviour
                 {
                     if (states.ContainsKey(step))
                     {
-                        Debug.LogError($"Шаг {step.Id} добавлен в режим «{mode.title}» несколько раз", step);
+                        Debug.LogError($"Шаг {step.name} добавлен в режим «{mode.title}» несколько раз", step);
                         continue;
                     }
 
@@ -225,7 +225,7 @@ public class ScenarioRunner : MonoBehaviour
         {
             type = type,
             time = Time.time - startTime,
-            stepId = step != null ? step.Id : null,
+            stepId = step != null ? step.name : null,
             group = step != null ? states[step].group.name : null,
             result = result,
             attempt = step != null ? states[step].attempts : 0,
