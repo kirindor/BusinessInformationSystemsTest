@@ -4,36 +4,36 @@ using UnityEngine.Events;
 
 public class SequenceCheck : MonoBehaviour
 {
-    [SerializeField] private List<string> order = new List<string> { "A", "B" };
+    [SerializeField] private List<string> _order = new List<string> { "A", "B" };
 
     public UnityEvent onCompleted = new UnityEvent();
     public UnityEvent onWrongOrder = new UnityEvent();
 
-    private int next;
+    private int _next;
 
     public void Push(string key)
     {
-        var index = order.IndexOf(key);
-        if (index < next)
+        var index = _order.IndexOf(key);
+        if (index < _next)
             return;
 
-        if (index > next)
+        if (index > _next)
         {
-            next = 0;
+            _next = 0;
             onWrongOrder.Invoke();
             return;
         }
 
-        next++;
-        if (next < order.Count)
+        _next++;
+        if (_next < _order.Count)
             return;
 
-        next = 0;
+        _next = 0;
         onCompleted.Invoke();
     }
 
     public void ResetProgress()
     {
-        next = 0;
+        _next = 0;
     }
 }

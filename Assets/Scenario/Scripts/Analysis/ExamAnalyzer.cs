@@ -4,13 +4,13 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "Scenario/Exam Analyzer")]
 public class ExamAnalyzer : ScenarioAnalyzer
 {
-    [SerializeField] private int maxScore = 100;
-    [SerializeField] private int failedPenalty = 10;
-    [SerializeField] private int skippedPenalty = 5;
+    [SerializeField] private int _maxScore = 100;
+    [SerializeField] private int _failedPenalty = 10;
+    [SerializeField] private int _skippedPenalty = 5;
 
     public override AnalysisResult Analyze(IReadOnlyList<LogEntry> log)
     {
-        var result = new AnalysisResult(Title) { maxScore = maxScore };
+        var result = new AnalysisResult(Title) { maxScore = _maxScore };
         var steps = LogReader.ReadSteps(log, result.warnings);
 
         var groups = new List<string>();
@@ -35,8 +35,8 @@ public class ExamAnalyzer : ScenarioAnalyzer
                     continue;
 
                 var outcome = GetOutcome(step);
-                var stepPenalty = outcome == StepStatus.Failed ? failedPenalty
-                    : outcome == StepStatus.Skipped ? skippedPenalty
+                var stepPenalty = outcome == StepStatus.Failed ? _failedPenalty
+                    : outcome == StepStatus.Skipped ? _skippedPenalty
                     : 0;
 
                 groupPenalty += stepPenalty;
@@ -47,7 +47,7 @@ public class ExamAnalyzer : ScenarioAnalyzer
             penalty += groupPenalty;
         }
 
-        result.score = Mathf.Max(0, maxScore - penalty);
+        result.score = Mathf.Max(0, _maxScore - penalty);
         return result;
     }
 

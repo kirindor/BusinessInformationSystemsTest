@@ -4,15 +4,15 @@ using UnityEngine.InputSystem;
 [RequireComponent(typeof(Rigidbody))]
 public class PlayerMover : MonoBehaviour
 {
-    [SerializeField] private float speed = 5f;
+    [SerializeField] private float _speed = 5f;
 
-    private Rigidbody body;
-    private Vector3 startPosition;
+    private Rigidbody _body;
+    private Vector3 _startPosition;
 
     private void Awake()
     {
-        body = GetComponent<Rigidbody>();
-        startPosition = transform.position;
+        _body = GetComponent<Rigidbody>();
+        _startPosition = transform.position;
     }
 
     private void FixedUpdate()
@@ -24,15 +24,15 @@ public class PlayerMover : MonoBehaviour
         if (keyboard.dKey.isPressed || keyboard.rightArrowKey.isPressed) input.x += 1f;
         if (keyboard.aKey.isPressed || keyboard.leftArrowKey.isPressed) input.x -= 1f;
 
-        var velocity = input.normalized * speed;
-        velocity.y = body.linearVelocity.y;
-        body.linearVelocity = velocity;
+        var velocity = input.normalized * _speed;
+        velocity.y = _body.linearVelocity.y;
+        _body.linearVelocity = velocity;
     }
 
     public void ResetPosition()
     {
-        body.position = startPosition;
-        transform.position = startPosition;
-        body.linearVelocity = Vector3.zero;
+        _body.position = _startPosition;
+        transform.position = _startPosition;
+        _body.linearVelocity = Vector3.zero;
     }
 }

@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 226b1e3dc0affe54c9ae1e3f9ef3e24c, type: 3}
   m_Name: ExamAnalyzer
   m_EditorClassIdentifier: Assembly-CSharp::ExamAnalyzer
-  title: "\u042D\u043A\u0437\u0430\u043C\u0435\u043D (100 \u2212 \u0448\u0442\u0440\u0430\u0444\u044B)"
-  maxScore: 100
-  failedPenalty: 10
-  skippedPenalty: 5
+  _title: "\u042D\u043A\u0437\u0430\u043C\u0435\u043D (100 \u2212 \u0448\u0442\u0440\u0430\u0444\u044B)"
+  _maxScore: 100
+  _failedPenalty: 10
+  _skippedPenalty: 5

@@ -4,10 +4,10 @@ using UnityEngine;
 
 public class LogAnalyzerWindow : EditorWindow
 {
-    private ScenarioAnalyzer analyzer;
-    private string path;
-    private string report;
-    private Vector2 scroll;
+    private ScenarioAnalyzer _analyzer;
+    private string _path;
+    private string _report;
+    private Vector2 _scroll;
 
     [MenuItem("Tools/Scenario Log Analyzer")]
     private static void Open()
@@ -17,28 +17,28 @@ public class LogAnalyzerWindow : EditorWindow
 
     private void OnGUI()
     {
-        analyzer = (ScenarioAnalyzer)EditorGUILayout.ObjectField("Analyzer", analyzer, typeof(ScenarioAnalyzer), false);
+        _analyzer = (ScenarioAnalyzer)EditorGUILayout.ObjectField("Analyzer", _analyzer, typeof(ScenarioAnalyzer), false);
 
         EditorGUILayout.BeginHorizontal();
-        EditorGUILayout.LabelField("Log file", string.IsNullOrEmpty(path) ? "—" : Path.GetFileName(path));
+        EditorGUILayout.LabelField("Log file", string.IsNullOrEmpty(_path) ? "—" : Path.GetFileName(_path));
         if (GUILayout.Button("Open...", GUILayout.Width(70)))
-            path = EditorUtility.OpenFilePanel("Scenario log", Path.Combine(Application.persistentDataPath, "ScenarioLogs"), "json");
+            _path = EditorUtility.OpenFilePanel("Scenario log", Path.Combine(Application.persistentDataPath, "ScenarioLogs"), "json");
         EditorGUILayout.EndHorizontal();
 
-        using (new EditorGUI.DisabledScope(analyzer == null || string.IsNullOrEmpty(path)))
+        using (new EditorGUI.DisabledScope(_analyzer == null || string.IsNullOrEmpty(_path)))
         {
             if (GUILayout.Button("Analyze file"))
-                report = analyzer.Analyze(LogFile.Load(path)).ToString();
+                _report = _analyzer.Analyze(LogFile.Load(_path)).ToString();
         }
 
-        using (new EditorGUI.DisabledScope(analyzer == null || !Application.isPlaying))
+        using (new EditorGUI.DisabledScope(_analyzer == null || !Application.isPlaying))
         {
             if (GUILayout.Button("Analyze current run"))
-                report = analyzer.Analyze(FindAnyObjectByType<ScenarioRunner>().Logger.Entries).ToString();
+                _report = _analyzer.Analyze(FindAnyObjectByType<ScenarioRunner>().Logger.Entries).ToString();
         }
 
-        scroll = EditorGUILayout.BeginScrollView(scroll);
-        EditorGUILayout.TextArea(report, EditorStyles.wordWrappedLabel);
+        _scroll = EditorGUILayout.BeginScrollView(_scroll);
+        EditorGUILayout.TextArea(_report, EditorStyles.wordWrappedLabel);
         EditorGUILayout.EndScrollView();
     }
 }

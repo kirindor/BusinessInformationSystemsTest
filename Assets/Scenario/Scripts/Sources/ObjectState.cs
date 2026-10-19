@@ -3,32 +3,32 @@ using UnityEngine.Events;
 
 public class ObjectState : MonoBehaviour
 {
-    [SerializeField] private bool isOn;
+    [SerializeField] private bool _isOn;
 
     public UnityEvent onTurnedOn = new UnityEvent();
     public UnityEvent onTurnedOff = new UnityEvent();
 
-    private bool startState;
+    private bool _startState;
 
-    public bool IsOn => isOn;
+    public bool IsOn => _isOn;
 
     private void Awake()
     {
-        startState = isOn;
+        _startState = _isOn;
     }
 
     public void TurnOn() => SetState(true);
     public void TurnOff() => SetState(false);
-    public void Toggle() => SetState(!isOn);
-    public void ResetState() => SetState(startState);
+    public void Toggle() => SetState(!_isOn);
+    public void ResetState() => SetState(_startState);
 
     public void SetState(bool value)
     {
-        if (isOn == value)
+        if (_isOn == value)
             return;
 
-        isOn = value;
-        if (isOn)
+        _isOn = value;
+        if (_isOn)
             onTurnedOn.Invoke();
         else
             onTurnedOff.Invoke();

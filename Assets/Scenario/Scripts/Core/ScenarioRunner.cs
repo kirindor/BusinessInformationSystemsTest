@@ -11,55 +11,55 @@ public class ScenarioRunner : MonoBehaviour
         public StepGroup group;
     }
 
-    [SerializeField] private ScenarioLogger logger;
-    [SerializeField] private string outOfTurnText = "Этот шаг ещё не начат:";
-    [SerializeField] private string limitText = "Порог нарушений достигнут, оставшиеся шаги группы пропущены";
+    [SerializeField] private ScenarioLogger _logger;
+    [SerializeField] private string _outOfTurnText = "Этот шаг ещё не начат:";
+    [SerializeField] private string _limitText = "Порог нарушений достигнут, оставшиеся шаги группы пропущены";
 
     public UnityEvent onStarted = new UnityEvent();
     public UnityEvent onChanged = new UnityEvent();
     public UnityEvent<string> onViolation = new UnityEvent<string>();
     public UnityEvent onFinished = new UnityEvent();
 
-    private readonly Dictionary<ScenarioStep, StepState> states = new Dictionary<ScenarioStep, StepState>();
-    private readonly List<ScenarioStep> activeSteps = new List<ScenarioStep>();
-    private ScenarioMode mode;
-    private int groupIndex;
-    private int stageIndex;
-    private int groupViolations;
-    private float startTime;
+    private readonly Dictionary<ScenarioStep, StepState> _states = new Dictionary<ScenarioStep, StepState>();
+    private readonly List<ScenarioStep> _activeSteps = new List<ScenarioStep>();
+    private ScenarioMode _mode;
+    private int _groupIndex;
+    private int _stageIndex;
+    private int _groupViolations;
+    private float _startTime;
 
     public bool IsRunning { get; private set; }
-    public ScenarioMode Mode => mode;
-    public ScenarioLogger Logger => logger;
-    public IReadOnlyList<ScenarioStep> ActiveSteps => activeSteps;
-    public StepGroup CurrentGroup => mode.groups[groupIndex];
-    public int GroupIndex => groupIndex;
-    public int GroupViolations => groupViolations;
+    public ScenarioMode Mode => _mode;
+    public ScenarioLogger Logger => _logger;
+    public IReadOnlyList<ScenarioStep> ActiveSteps => _activeSteps;
+    public StepGroup CurrentGroup => _mode.groups[_groupIndex];
+    public int GroupIndex => _groupIndex;
+    public int GroupViolations => _groupViolations;
 
-    public int GetAttempts(ScenarioStep step) => states[step].attempts;
+    public int GetAttempts(ScenarioStep step) => _states[step].attempts;
 
-    public void Run(ScenarioMode newMode)
+    public void Run(ScenarioMode mode)
     {
         Cleanup();
-        mode = newMode;
-        startTime = Time.time;
+        _mode = mode;
+        _startTime = Time.time;
         IsRunning = true;
-        logger.BeginRun();
-        Write(LogEvents.RunStarted, null, null, mode.title);
+        _logger.BeginRun();
+        Write(LogEvents.RunStarted, null, null, _mode.title);
 
-        foreach (var group in mode.groups)
+        foreach (var group in _mode.groups)
         {
             foreach (var stage in group.stages)
             {
                 foreach (var step in stage.steps)
                 {
-                    if (states.ContainsKey(step))
+                    if (_states.ContainsKey(step))
                     {
-                        Debug.LogError($"Шаг {step.name} добавлен в режим «{mode.title}» несколько раз", step);
+                        Debug.LogError($"Шаг {step.name} добавлен в режим «{_mode.title}» несколько раз", step);
                         continue;
                     }
 
-                    states.Add(step, new StepState { group = group });
+                    _states.Add(step, new StepState { group = group });
                     step.Reported += OnStepReported;
                     Write(LogEvents.StepPlanned, step, null, step.Description);
                 }
@@ -67,14 +67,14 @@ public class ScenarioRunner : MonoBehaviour
         }
 
         onStarted.Invoke();
-        groupIndex = 0;
+        _groupIndex = 0;
         StartGroup();
         onChanged.Invoke();
     }
 
     public void Restart()
     {
-        Run(mode);
+        Run(_mode);
     }
 
     public void Abort()
@@ -90,20 +90,20 @@ public class ScenarioRunner : MonoBehaviour
 
     private void OnStepReported(ScenarioStep step, bool success, string reason)
     {
-        var state = states[step];
+        var state = _states[step];
         if (state.status != StepStatus.Pending && state.status != StepStatus.Active)
             return;
 
         if (state.status == StepStatus.Pending)
         {
-            if (mode.outOfTurn == OutOfTurnAction.Ignore)
+            if (_mode.outOfTurn == OutOfTurnAction.Ignore)
             {
                 Write(LogEvents.StepAction, step, LogEvents.Ignored);
                 return;
             }
 
             success = false;
-            reason = $"{outOfTurnText} «{step.Description}»";
+            reason = $"{_outOfTurnText} «{step.Description}»";
         }
 
         state.attempts++;
@@ -116,20 +116,20 @@ public class ScenarioRunner : MonoBehaviour
         else
         {
             Write(LogEvents.StepAction, step, LogEvents.Violation, reason);
-            if (!mode.retryAfterViolation)
+            if (!_mode.retryAfterViolation)
                 Close(step, StepStatus.Failed);
 
-            groupViolations++;
-            if (mode.violationLimit > 0 && groupViolations >= mode.violationLimit)
+            _groupViolations++;
+            if (_mode.violationLimit > 0 && _groupViolations >= _mode.violationLimit)
             {
                 SkipCurrentGroup();
-                reason += "\n" + limitText;
+                reason += "\n" + _limitText;
             }
 
             onViolation.Invoke(reason);
         }
 
-        if (activeSteps.Count == 0)
+        if (_activeSteps.Count == 0)
             NextStage();
 
         onChanged.Invoke();
@@ -137,8 +137,8 @@ public class ScenarioRunner : MonoBehaviour
 
     private void StartGroup()
     {
-        groupViolations = 0;
-        stageIndex = -1;
+        _groupViolations = 0;
+        _stageIndex = -1;
         Write(LogEvents.GroupStarted, null, null, CurrentGroup.name);
         NextStage();
     }
@@ -146,19 +146,19 @@ public class ScenarioRunner : MonoBehaviour
     private void NextStage()
     {
         var stages = CurrentGroup.stages;
-        while (++stageIndex < stages.Count)
+        while (++_stageIndex < stages.Count)
         {
-            foreach (var step in stages[stageIndex].steps)
+            foreach (var step in stages[_stageIndex].steps)
             {
-                if (states[step].status == StepStatus.Pending)
+                if (_states[step].status == StepStatus.Pending)
                     Activate(step);
             }
 
-            if (activeSteps.Count > 0)
+            if (_activeSteps.Count > 0)
                 return;
         }
 
-        if (++groupIndex < mode.groups.Count)
+        if (++_groupIndex < _mode.groups.Count)
             StartGroup();
         else
             Finish();
@@ -170,7 +170,7 @@ public class ScenarioRunner : MonoBehaviour
         {
             foreach (var step in stage.steps)
             {
-                var status = states[step].status;
+                var status = _states[step].status;
                 if (status == StepStatus.Pending || status == StepStatus.Active)
                     Close(step, StepStatus.Skipped);
             }
@@ -179,22 +179,22 @@ public class ScenarioRunner : MonoBehaviour
 
     private void Activate(ScenarioStep step)
     {
-        states[step].status = StepStatus.Active;
-        activeSteps.Add(step);
+        _states[step].status = StepStatus.Active;
+        _activeSteps.Add(step);
         Write(LogEvents.StepActivated, step);
         step.onActivated.Invoke();
     }
 
     private void Close(ScenarioStep step, StepStatus status)
     {
-        var state = states[step];
+        var state = _states[step];
         var wasActive = state.status == StepStatus.Active;
         state.status = status;
         Write(LogEvents.StepFinished, step, status.ToString());
 
         if (wasActive)
         {
-            activeSteps.Remove(step);
+            _activeSteps.Remove(step);
             step.onDeactivated.Invoke();
         }
     }
@@ -208,27 +208,27 @@ public class ScenarioRunner : MonoBehaviour
 
     private void Cleanup()
     {
-        foreach (var step in activeSteps)
+        foreach (var step in _activeSteps)
             step.onDeactivated.Invoke();
 
-        foreach (var step in states.Keys)
+        foreach (var step in _states.Keys)
             step.Reported -= OnStepReported;
 
-        activeSteps.Clear();
-        states.Clear();
+        _activeSteps.Clear();
+        _states.Clear();
         IsRunning = false;
     }
 
     private void Write(string type, ScenarioStep step = null, string result = null, string message = null)
     {
-        logger.Write(new LogEntry
+        _logger.Write(new LogEntry
         {
             type = type,
-            time = Time.time - startTime,
+            time = Time.time - _startTime,
             stepId = step != null ? step.name : null,
-            group = step != null ? states[step].group.name : null,
+            group = step != null ? _states[step].group.name : null,
             result = result,
-            attempt = step != null ? states[step].attempts : 0,
+            attempt = step != null ? _states[step].attempts : 0,
             message = message
         });
     }

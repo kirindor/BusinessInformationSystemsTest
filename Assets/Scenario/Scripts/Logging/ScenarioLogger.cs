@@ -3,17 +3,17 @@ using UnityEngine;
 
 public class ScenarioLogger : MonoBehaviour
 {
-    [SerializeField] private List<LogEntry> entries = new List<LogEntry>();
+    [SerializeField] private List<LogEntry> _entries = new List<LogEntry>();
 
-    public IReadOnlyList<LogEntry> Entries => entries;
+    public IReadOnlyList<LogEntry> Entries => _entries;
 
     public virtual void BeginRun()
     {
-        entries.Clear();
+        _entries.Clear();
     }
 
     public virtual void Write(LogEntry entry)
     {
-        entries.Add(entry);
+        _entries.Add(entry);
     }
 }

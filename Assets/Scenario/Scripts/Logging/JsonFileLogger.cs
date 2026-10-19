@@ -4,14 +4,14 @@ using UnityEngine;
 
 public class JsonFileLogger : ScenarioLogger
 {
-    [SerializeField] private string folder = "ScenarioLogs";
+    [SerializeField] private string _folder = "ScenarioLogs";
 
     public string FilePath { get; private set; }
 
     public override void BeginRun()
     {
         base.BeginRun();
-        var directory = Path.Combine(Application.persistentDataPath, folder);
+        var directory = Path.Combine(Application.persistentDataPath, _folder);
         Directory.CreateDirectory(directory);
         FilePath = Path.Combine(directory, $"run_{DateTime.Now:yyyy-MM-dd_HH-mm-ss}.json");
         Debug.Log($"Журнал прохождения: {FilePath}");

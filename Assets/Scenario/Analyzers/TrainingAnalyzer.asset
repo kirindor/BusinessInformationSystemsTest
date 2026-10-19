@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a29dcf4a3f965d54f96531caf31c5a95, type: 3}
   m_Name: TrainingAnalyzer
   m_EditorClassIdentifier: Assembly-CSharp::TrainingAnalyzer
-  title: "\u0422\u0440\u0435\u043D\u0438\u0440\u043E\u0432\u043A\u0430 (10 / 5 /
+  _title: "\u0422\u0440\u0435\u043D\u0438\u0440\u043E\u0432\u043A\u0430 (10 / 5 /
     0 \u0437\u0430 \u0448\u0430\u0433)"
-  pointsByAttempt: 0a0000000500000000000000
+  _pointsByAttempt: 0a0000000500000000000000

@@ -3,15 +3,15 @@ using UnityEngine.Events;
 
 public class StateCheck : MonoBehaviour
 {
-    [SerializeField] private ObjectState target;
-    [SerializeField] private bool requiredOn = true;
+    [SerializeField] private ObjectState _target;
+    [SerializeField] private bool _requiredOn = true;
 
     public UnityEvent onPassed = new UnityEvent();
     public UnityEvent onFailed = new UnityEvent();
 
     public void Check()
     {
-        if (target.IsOn == requiredOn)
+        if (_target.IsOn == _requiredOn)
             onPassed.Invoke();
         else
             onFailed.Invoke();

@@ -4,14 +4,14 @@ using UnityEngine.Events;
 
 public class ScenarioStep : MonoBehaviour
 {
-    [SerializeField, TextArea] private string description;
+    [SerializeField, TextArea] private string _description;
 
     public UnityEvent onActivated = new UnityEvent();
     public UnityEvent onDeactivated = new UnityEvent();
 
     public event Action<ScenarioStep, bool, string> Reported;
 
-    public string Description => description;
+    public string Description => _description;
 
     public void Complete()
     {
