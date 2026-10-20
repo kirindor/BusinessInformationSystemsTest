@@ -9,6 +9,9 @@ public class StateCheck : MonoBehaviour
     public UnityEvent onPassed = new UnityEvent();
     public UnityEvent onFailed = new UnityEvent();
 
+    public ObjectState Target => _target;
+    public bool RequiredOn => _requiredOn;
+
     public void Check()
     {
         if (_target.IsOn == _requiredOn)

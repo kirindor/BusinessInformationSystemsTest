@@ -11,6 +11,8 @@ public class SequenceCheck : MonoBehaviour
 
     private int _next;
 
+    public IReadOnlyList<string> Order => _order;
+
     public void Push(string key)
     {
         var index = _order.IndexOf(key);

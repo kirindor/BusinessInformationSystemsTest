@@ -12,6 +12,8 @@ public class Interactable : MonoBehaviour
 
     private bool _inRange;
 
+    public Key Key => _key;
+
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag(_targetTag))

@@ -19,6 +19,10 @@ public class ScenarioModeEditor : Editor
     {
         serializedObject.Update();
 
+        if (GUILayout.Button("Открыть в редакторе сценариев", GUILayout.Height(26)))
+            ScenarioEditorWindow.Open((ScenarioMode)target);
+        EditorGUILayout.Space();
+
         EditorGUILayout.PropertyField(serializedObject.FindProperty("title"));
         EditorGUILayout.PropertyField(serializedObject.FindProperty("retryAfterViolation"));
         EditorGUILayout.PropertyField(serializedObject.FindProperty("violationLimit"));
